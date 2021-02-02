@@ -11,20 +11,21 @@ available_pairs = {"eur": "eur", "euro": "eur", "евро": "eur",
                    "btc": "btc", "bitcoin": "btc", "биткоин": "btc",
                    "eth": "eth", "ethereum": "eth", "эфириум": "eth",
                    "dot": "dot", "polkadot": "dot", "полкадот": "dot"}
-help_message = "Введите сначала валюту, которую вы хотите конвертировать, далее через пробел - валюту в которую " \
-               "конвертируете и в конце так же через пробел количество переводимой валюты. Например, вы хотите " \
-               "конвертироваться 100 Долларов в Биткоин. Для этого вам нужно написать следующую команду:" \
-               "\nUSD BTC 100\nВы так же можете ввести полные названия валют на английском или русском языках. " \
-               "\n\nСписок доступных команд для бота:\n/start - перезагрузка бота" \
-               "\n/help - помощь\n/values  - список доступных для конвертации валют"
+available_commands = "Список доступных команд:\n/start - перезагрузка бота\n/help - помощь\n/values  - доступные для " \
+                     "конвертации валюты"
+help_message = f"\U000027A1 Сначала введите валюту, которую хотите конвертировать\n\U000027A1 Далее, через пробел — " \
+               f"валюту, в которую конвертируете\n\U000027A1 В конце, также через пробел, количество переводимой " \
+               f"валюты\n\n\U0001F7E2 Например, вы хотите конвертировать 100 Долларов в Биткоин Для этого нужно " \
+               f"написать следующую команду:\n\nUSD BTC 100\n\nВы также можете ввести полные названия валют на " \
+               f"английском или русском языках\n\n{available_commands}"
 
 
 @bot.message_handler(commands=['start', 'help', 'values'])
 def start_help_values(message):
     if message.text == "/start":
         bot.send_message(message.from_user.id, f"Здравствуй, {message.from_user.first_name}! Добро пожаловать в "
-                                               f"конвертвер Фиатных и Крипто валют!\nПользоваться им довольно просто."
-                                               f"{help_message}")
+                                               f"конвертвер Фиатных и Крипто валют! Пользоваться им довольно просто:\n"
+                                               f"\n{help_message}")
 
     elif message.text == "/values":
         bot.send_message(message.from_user.id, "Список доступных для конвертации валют:\n\nEUR (Eвро/Euro)\nUSD "
@@ -42,31 +43,33 @@ def convert(message):
         try:
             amount = float(amount)
         except ValueError:
-            bot.send_message(message.from_user.id, "Ошибка! Введите, пожалуйста, числовое значение суммы")
+            bot.send_message(message.from_user.id, f"\U000026D4 Ошибка!\n\n\U00002705Введите, пожалуйста, числовое "
+                                                   f"значение суммы\n\U00002705Если число дробное - используйте точку, "
+                                                   f"а не запятую в качестве разделителя\n\n{available_commands}")
         else:
             try:
                 if what_convert not in available_pairs or convert_to not in available_pairs or amount < 0:
                     raise extensions.APIException
 
             except extensions.APIException:
-                bot.send_message(message.from_user.id, "К сожалению, я не могу вам помочь \U0001F614 Отсутствующая "
-                                                       "валютная пара или введены неверные значения.\nОбратите "
-                                                       "внимание, что введенная сумма не должна быть отрицательной "
-                                                       "\U0000261D\nЧтобы ознакомиться с доступными для конвертации "
-                                                       "валютными парами, введите /values")
+                bot.send_message(message.from_user.id, f"К сожалению, я не могу вам помочь \U0001F614\nВалютная пара "
+                                                       f"отсутствует или введены неверные значения\n\n\U0001F4A1 "
+                                                       f"Обратите внимание, что введенная сумма не должна быть "
+                                                       f"отрицательной\n\n{available_commands}")
             else:
                 price = extensions.APIrequest.get_price(available_pairs[what_convert], available_pairs[convert_to],
                                                         amount)
                 bot.reply_to(message, price)
     except ValueError:
-        bot.send_message(message.from_user.id, "Ошибка! Введите, пожалуйста, значение в формате:\n\n<валюта>_<валюта, "
-                                               "в которую конвертируете>_<сумма>\n\nБез треугольных скобок, а вместо "
-                                               "нижнего подчеркивания \"_\" поставьте пробел")
+        bot.send_message(message.from_user.id, f"\U000026D4 Ошибка!\n\n\U00002705Введите, пожалуйста, значение в "
+                                               f"формате:\n\n <валюта>_<валюта, в которую конвертируете>_<сумма>"
+                                               f"\n\n\U00002705 Без треугольных скобок, а вместо нижнего "
+                                               f"подчеркивания \"_\" поставьте пробел\n\n{available_commands}")
 
 
 @bot.message_handler(content_types=['photo', 'audio', 'document', 'sticker', 'video', 'location', 'contact', ])
 def other_content(message: telebot.types.Message):
-    bot.reply_to(message, "Простите, но я принимаю только текстовый ввод \U0001F937")
+    bot.reply_to(message, f"Простите, но я принимаю только текстовый ввод \U0001F937\n\n{available_commands}")
 
 
 bot.polling()

@@ -14,4 +14,4 @@ class APIrequest:
 class APIException(Exception):
     @staticmethod
     def message():
-        return "Неправильно введенные данные или отсутствующая пара"
+        return "Ошибка ввода или отсутствующая пара"
