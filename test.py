@@ -9,3 +9,5 @@ available_pairs = {"eur": "eur", "euro": "eur", "евро": "eur",
 x = available_pairs.values()
 for i in x:
     print(i)
+
+print("\U0001F937")
