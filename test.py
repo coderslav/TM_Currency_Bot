@@ -11,3 +11,7 @@ for i in x:
     print(i)
 
 print("\U0001F937")
+
+t = 2.729e-05
+t1 = format(t, '.8f')
+print(t1)
